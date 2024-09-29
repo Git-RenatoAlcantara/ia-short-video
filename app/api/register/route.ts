@@ -35,13 +35,13 @@ export async function POST(
           return NextResponse.json({ user: null, message: "User with this email already exists"}, {status: 409})
         }
   
-        const hashedPassword = await bcrypt.hash(password, 12)
+        //const hashedPassword = await bcrypt.hash(password, 12)
   
     
         const newUser = await db.insert(Users).values({
           name: username,
           email: email,
-          password: hashedPassword
+          password: password
         })
   
         console.log(newUser)

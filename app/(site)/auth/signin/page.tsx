@@ -69,7 +69,7 @@ const SignForm = () => {
                         description: "Wait a minute.",
                         variant: "default"
                     })
-                    router.push('/')
+                    router.push('/dashboard')
                 }
             })
     }

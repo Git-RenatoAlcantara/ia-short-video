@@ -1,11 +1,12 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider  from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt'
 import { db } from "@/configs/db";
 import { Users } from "@/configs/schema";
 import { eq } from "drizzle-orm";
+import { getUserFromDb } from "../actions/user.action";
 
 
 export const authOptions : NextAuthOptions = {
@@ -16,7 +17,7 @@ export const authOptions : NextAuthOptions = {
         strategy: 'jwt'
     },
     pages: {
-        signIn: 'sign-in'
+        signIn: '/auth/signin'
     },
     providers: [
     
@@ -33,23 +34,15 @@ export const authOptions : NextAuthOptions = {
                     throw new Error('Email and password are empty')
                 }
              
-                /*
-                const existingUser = await prisma.user.findUnique({
-                    where: { email: credentials?.email}
-                });
-                */
-
-                const existingUser: any = db.select().from(Users)
-                .where(eq(Users.email, credentials?.email))
-
-
-                console.log(existingUser)
-                if(!existingUser[0]){
-                    throw new Error('User not exists')
+               const user = await getUserFromDb(credentials.email as string, credentials.password as string)
+                if(!user){
+                    throw new Error("User not found.")
                 }
-
                
-                return existingUser
+                if(!user.success){
+                    throw new Error(user.message)
+                }
+                return user.data as any
             }
           })      
     ],

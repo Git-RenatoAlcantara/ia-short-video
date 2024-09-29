@@ -49,6 +49,7 @@ export default function Signup() {
   });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log(data)
     axios
       .post("/api/register", data)
       .then(() => router.push("/dashboard"))
